@@ -6,11 +6,11 @@
     <title>Мой Творческий Блокнот</title>
     <style>
         :root {
-            --bg-color: #f0f4f8;
+            --bg-color: #f5f6fa;
             --sidebar-width: 280px;
-            --primary-color: #ff7675;
-            --text-color: #2d3436;
-            --border-color: #dfe6e9;
+            --primary-color: #74b9ff;
+            --text-color: #2f3640;
+            --border-color: #dcdde1;
         }
 
         * {
@@ -36,20 +36,20 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.02);
         }
 
         .sidebar h2 {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             margin-bottom: 20px;
-            color: #636e72;
+            color: #718093;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .btn-add {
-            background-color: var(--primary-color);
+            background-color: #2f3640;
             color: white;
             border: none;
             padding: 12px 15px;
@@ -58,11 +58,10 @@
             cursor: pointer;
             transition: all 0.2s;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(255, 118, 117, 0.2);
         }
 
         .btn-add:hover {
-            background-color: #e84393;
+            background-color: #718093;
             transform: translateY(-1px);
         }
 
@@ -78,21 +77,19 @@
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            background-color: #fbfbfb;
-            border: 1px solid #f0f0f0;
+            background-color: #f5f6fa;
+            border: 1px solid transparent;
             font-weight: 500;
         }
 
         .notebook-item:hover {
-            background-color: #f5f6fa;
-            border-color: #dcdde1;
+            background-color: #dcdde1;
         }
 
         .notebook-item.active {
-            background-color: #ffeaa7;
-            color: #2d3436;
+            background-color: #fbc531;
+            color: #2f3640;
             font-weight: 600;
-            border-color: #fdcb6e;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
@@ -114,7 +111,6 @@
             align-items: center;
             padding: 0 30px;
             gap: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .tool-group {
@@ -125,7 +121,7 @@
 
         .tool-group label {
             font-size: 0.9rem;
-            color: #636e72;
+            color: #718093;
             font-weight: 600;
         }
 
@@ -141,12 +137,12 @@
 
         .color-picker::-webkit-color-swatch {
             border-radius: 50%;
-            border: 2px solid #dfe6e9;
+            border: 2px solid #dcdde1;
         }
 
         .brush-size {
             cursor: pointer;
-            accent-color: var(--primary-color);
+            accent-color: #2f3640;
         }
 
         .btn-tool {
@@ -157,35 +153,32 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .btn-tool:hover {
-            background: #dfe6e9;
+            background: #dcdde1;
         }
 
         .btn-tool.active {
-            background: #2d3436;
+            background: #2f3640;
             color: white;
-            border-color: #2d3436;
+            border-color: #2f3640;
         }
 
         .btn-clear {
             margin-left: auto;
-            background-color: #fab1a0;
-            color: #d63031;
-            border: none;
-            font-weight: 600;
+            background-color: #f5f6fa;
+            color: #e84118;
+            border: 1px solid #dcdde1;
         }
 
         .btn-clear:hover {
-            background-color: #ff7675;
+            background-color: #e84118;
             color: white;
+            border-color: #e84118;
         }
 
-        /* Рабочее пространство */
+        /* Рабочая область */
         .workspace {
             flex-grow: 1;
             display: flex;
@@ -194,29 +187,42 @@
             overflow: hidden;
         }
 
-        /* Стилизация под страницу блокнота */
         .canvas-container {
             flex-grow: 1;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
             position: relative;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #e8e8e8;
+            border: 1px solid #e1b12c; /* Мягкая рамка блокнота */
         }
 
         canvas {
-            /* Мягкий фон в клетку (как тетрадь) */
-            background-color: #fafafa;
+            background-color: #fdfbf7; /* Приятный теплый оттенок бумаги */
             background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-            background-size: 25px 25px; /* Размер клеточки */
-            cursor: crosshair;
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
             display: block;
+            /* Убираем стандартный курсор-крестик */
+            cursor: none; 
+        }
+
+        /* Наш собственный круглый курсор, показывающий размер кисти */
+        #customCursor {
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 9999;
         }
 
         .notes-container {
@@ -226,7 +232,6 @@
             gap: 15px;
         }
 
-        /* Заметки в линейку */
         .notes-container textarea {
             flex-grow: 1;
             width: 100%;
@@ -237,16 +242,11 @@
             font-size: 1rem;
             line-height: 1.6;
             outline: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-            background: #fffdf6; /* Цвет бумаги верже */
-            background-image: linear-gradient(#e0decb 1px, transparent 1px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+            background: #fdfbf7;
+            background-image: linear-gradient(#dcdde1 1px, transparent 1px);
             background-size: 100% 1.6rem;
-            color: #2c3e50;
-            transition: border-color 0.2s;
-        }
-
-        .notes-container textarea:focus {
-            border-color: #fdcb6e;
+            color: #2f3640;
         }
 
         .no-notebook-overlay {
@@ -255,45 +255,47 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #f0f4f8;
+            background: #f5f6fa;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             z-index: 10;
-            color: #b2bec3;
-            font-size: 1.3rem;
-            gap: 12px;
+            color: #718093;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 
+    <!-- Наш кастомный курсор -->
+    <div id="customCursor"></div>
+
     <div class="sidebar">
-        <h2>📚 Мои Блокноты</h2>
-        <button class="btn-add" id="addNotebookBtn">+ Новый блокнот</button>
+        <h2>📒 Мой Блокнот</h2>
+        <button class="btn-add" id="addNotebookBtn">+ Добавить страницу</button>
         <ul class="notebook-list" id="notebookList"></ul>
     </div>
 
     <div class="main-content">
         <div class="no-notebook-overlay" id="noNotebookOverlay">
-            <p>✨ Откройте или создайте блокнот, чтобы начать творчество</p>
+            <p>✒️ Откройте страницу, чтобы начать писать или рисовать</p>
         </div>
 
         <div class="toolbar">
             <div class="tool-group">
-                <label>Палитра:</label>
-                <input type="color" id="colorPicker" class="color-picker" value="#2d3436">
+                <label>Чернила:</label>
+                <input type="color" id="colorPicker" class="color-picker" value="#2f3640">
             </div>
 
             <div class="tool-group">
-                <label>Размер:</label>
-                <input type="range" id="brushSize" class="brush-size" min="2" max="40" value="8">
-                <span id="sizeValue" style="font-size: 0.9rem; width: 20px; font-weight: bold;">8</span>
+                <label>Размер пера:</label>
+                <input type="range" id="brushSize" class="brush-size" min="4" max="50" value="12">
+                <span id="sizeValue" style="font-size: 0.9rem; width: 20px; font-weight: bold;">12</span>
             </div>
 
             <div class="tool-group">
-                <button id="toolBrush" class="btn-tool active">✨ Живая Кисть</button>
+                <button id="toolBrush" class="btn-tool active">✒️ Перо / Кисть</button>
                 <button id="toolEraser" class="btn-tool">🧽 Ластик</button>
             </div>
 
@@ -305,8 +307,8 @@
                 <canvas id="paintCanvas"></canvas>
             </div>
             <div class="notes-container">
-                <h3 style="font-size: 1rem; color: #636e72; font-weight: 600;">✍️ Текстовые заметки:</h3>
-                <textarea id="notebookNotes" placeholder="Здесь можно писать..."></textarea>
+                <h3 style="font-size: 1rem; color: #718093; font-weight: 600;">✍️ Заметки:</h3>
+                <textarea id="notebookNotes" placeholder="Место для мыслей..."></textarea>
             </div>
         </div>
     </div>
@@ -315,6 +317,7 @@
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
         const canvasContainer = document.getElementById('canvasContainer');
+        const customCursor = document.getElementById('customCursor');
         
         const addNotebookBtn = document.getElementById('addNotebookBtn');
         const notebookList = document.getElementById('notebookList');
@@ -334,36 +337,47 @@
         let isDrawing = false;
         let currentMode = 'brush'; 
         
-        // Массивы для хранения истории точек (для плавности алгоритма)
-        let points = [];
+        // Храним координаты последней точки
+        let lastX = 0;
+        let lastY = 0;
 
         function resizeCanvas() {
             canvas.width = canvasContainer.clientWidth;
             canvas.height = canvasContainer.clientHeight;
-            setupCanvasContext();
-            
-            // Перерисовка при изменении окна
             if (activeNotebookId) {
                 restoreCanvas();
             }
         }
 
-        function setupCanvasContext() {
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-        }
-
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- Улучшенный алгоритм рисования (Кривые Безье + динамическая толщина) ---
+        // --- Управление кастомным курсором ---
+        document.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Показываем круглый курсор только тогда, когда мышка над холстом
+            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom && activeNotebookId) {
+                customCursor.style.display = 'block';
+                customCursor.style.left = e.clientX + 'px';
+                customCursor.style.top = e.clientY + 'px';
+                
+                // Подгоняем размер круга под выбранный размер кисти
+                const size = brushSize.value;
+                customCursor.style.width = size + 'px';
+                customCursor.style.height = size + 'px';
+            } else {
+                customCursor.style.display = 'none';
+            }
+        });
+
+        // --- Алгоритм Живой Каллиграфической Кисти ---
         function startDrawing(e) {
             if (!activeNotebookId) return;
             isDrawing = true;
-            points = [];
             
             const pos = getMousePos(e);
-            points.push({ x: pos.x, y: pos.y, time: Date.now() });
+            lastX = pos.x;
+            lastY = pos.y;
         }
 
         function draw(e) {
@@ -371,59 +385,59 @@
             e.preventDefault();
 
             const pos = getMousePos(e);
-            const now = Date.now();
             
-            points.push({ x: pos.x, y: pos.y, time: now });
-
-            if (points.length < 3) return;
-
-            // Вычисляем скорость движения для красивого эффекта "живой кисти"
-            const p1 = points[points.length - 2];
-            const p2 = points[points.length - 1];
-            const dist = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-            const timeDiff = p2.time - p1.time || 1;
-            const speed = dist / timeDiff;
-
-            // Чем быстрее ведем, тем кисть чуть тоньше (эффект пера)
-            const baseSize = parseInt(brushSize.value);
-            let targetSize = baseSize;
-            if (currentMode === 'brush') {
-                targetSize = baseSize - (speed * 1.5);
-                if (targetSize < baseSize * 0.4) targetSize = baseSize * 0.4; // ограничение тонкости
-            }
-
-            ctx.beginPath();
+            // Расстояние между текущей и прошлой точкой
+            const dist = Math.sqrt(Math.pow(pos.x - lastX, 2) + Math.pow(pos.y - lastY, 2));
             
-            // Сглаживание за счет кривых линии между точками
-            const xc = (points[points.length - 2].x + points[points.length - 1].x) / 2;
-            const yc = (points[points.length - 2].y + points[points.length - 1].y) / 2;
+            // Чтобы линия была непрерывной и плавной, мы заполняем пространство между точками 
+            // множеством мелких каллиграфических отпечатков (мазков)
+            const steps = Math.max(Math.floor(dist / 0.5), 1);
             
-            ctx.moveTo(points[points.length - 3].x, points[points.length - 3].y);
-            ctx.quadraticCurveTo(points[points.length - 2].x, points[points.length - 2].y, xc, yc);
-
+            ctx.save();
+            
             if (currentMode === 'eraser') {
-                ctx.strokeStyle = '#fafafa'; // цвет холста под клеточкой
-                ctx.lineWidth = baseSize * 1.5; // ластик чуть шире
+                // Режим ластика — обычный мягкий круг
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#fdfbf7'; 
+                ctx.lineWidth = brushSize.value * 1.5;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
             } else {
-                ctx.strokeStyle = colorPicker.value;
-                // Плавное изменение толщины кисти
-                ctx.lineWidth = targetSize;
-            }
-
-            // Мягкие полупрозрачные края для эффекта настоящей краски
-            if (currentMode === 'brush') {
+                // Режим пера/кисти
+                ctx.fillStyle = colorPicker.value;
+                
+                // Создаем эффект легкого размытия по краям мазка (впитывание чернил)
                 ctx.shadowBlur = 1;
                 ctx.shadowColor = colorPicker.value;
-            } else {
-                ctx.shadowBlur = 0;
-            }
 
-            ctx.stroke();
-            
-            // Очищаем старые точки, чтобы не перегружать память
-            if (points.length > 10) {
-                points.shift();
+                const baseSize = parseInt(brushSize.value);
+
+                for (let i = 0; i < steps; i++) {
+                    const t = i / steps;
+                    // Интерполяция (находим промежуточные координаты)
+                    const x = lastX + (pos.x - lastX) * t;
+                    const y = lastY + (pos.y - lastY) * t;
+                    
+                    ctx.beginPath();
+                    
+                    // ЭФФЕКТ ПЕРА: вместо круглых точек рисуем вытянутый эллипс под углом 45 градусов.
+                    // Из-за этого вертикальные и горизонтальные линии будут иметь разную толщину!
+                    const radiusX = baseSize / 2;
+                    const radiusY = baseSize / 6; // Сплющиваем эллипс для эффекта среза пера
+                    const rotation = Math.PI / 4; // Угол наклона пера (45 градусов)
+                    
+                    ctx.ellipse(x, y, radiusX, radiusY, rotation, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
             }
+            
+            ctx.restore();
+
+            lastX = pos.x;
+            lastY = pos.y;
         }
 
         function stopDrawing() {
@@ -452,7 +466,7 @@
         canvas.addEventListener('touchmove', draw);
         canvas.addEventListener('touchend', stopDrawing);
 
-        // --- Инструменты ---
+        // --- Управление ---
         toolBrush.addEventListener('click', () => {
             currentMode = 'brush';
             toolBrush.classList.add('active');
@@ -470,15 +484,15 @@
         });
 
         clearCanvasBtn.addEventListener('click', () => {
-            if (confirm('Очистить этот лист тетради?')) {
+            if (confirm('Очистить эту страницу блокнота?')) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 saveCurrentNotebookData();
             }
         });
 
-        // --- Управление блокнотами ---
+        // --- Блокноты ---
         addNotebookBtn.addEventListener('click', () => {
-            const name = prompt('Как назовем новую страничку блокнота?', `Страница ${notebooks.length + 1}`);
+            const name = prompt('Назовите новую страницу:', `Страница ${notebooks.length + 1}`);
             if (name === null || name.trim() === '') return;
 
             const newNotebook = {
@@ -506,6 +520,7 @@
             if (notebooks.length === 0) {
                 noNotebookOverlay.style.display = 'flex';
                 activeNotebookId = null;
+                customCursor.style.display = 'none';
             } else {
                 noNotebookOverlay.style.display = 'none';
             }
@@ -541,7 +556,6 @@
                 const img = new Image();
                 img.src = currentNb.canvasData;
                 img.onload = () => {
-                    setupCanvasContext();
                     ctx.drawImage(img, 0, 0);
                 };
             }
