@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Творческий Блокнот</title>
+    <style>
+        :root {
+            --bg-color: #f7f9fa;
+            --sidebar-width: 260px;
+            --primary-color: #6366f1;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Боковая панель для блокнотов */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .btn-add:hover {
+            background-color: #4f46e5;
+        }
+
+        .notebook-list {
+            list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .notebook-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notebook-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .notebook-item.active {
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            font-weight: 600;
+            border-color: #c7d2fe;
+        }
+
+        /* Главная рабочая область */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Панель инструментов */
+        .toolbar {
+            height: 70px;
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            gap: 25px;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-group label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .color-picker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .color-picker::-webkit-color-swatch {
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+        }
+
+        .brush-size {
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .btn-tool {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-tool:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-tool.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .btn-clear {
+            margin-left: auto;
+            background-color: #fee2e2;
+            color: #ef4444;
+            border: none;
+        }
+
+        .btn-clear:hover {
+            background-color: #fca5a5;
+        }
+
+        /* Зона холста и заметок */
+        .workspace {
+            flex-grow: 1;
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            flex-grow: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            background: white;
+            cursor: crosshair;
+            display: block;
+        }
+
+        .notes-container {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notes-container textarea {
+            flex-grow: 1;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            resize: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            outline: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s;
+        }
+
+        .notes-container textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .no-notebook-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f7f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>📖 Блокноты</h2>
+        <button class="btn-add" id="addNotebookBtn">+ Создать блокнот</button>
+        <ul class="notebook-list" id="notebookList"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="no-notebook-overlay" id="noNotebookOverlay">
+            <p>У вас пока нет активных блокнотов</p>
+            <p style="font-size: 0.9rem;">Создайте новый блокнот слева, чтобы начать работу ✨</p>
+        </div>
+
+        <div class="toolbar">
+            <div class="tool-group">
+                <label>Цвет:</label>
+                <input type="color" id="colorPicker" class="color-picker" value="#6366f1">
+            </div>
+
+            <div class="tool-group">
+                <label>Размер кисти:</label>
+                <input type="range" id="brushSize" class="brush-size" min="1" max="30" value="5">
+                <span id="sizeValue" style="font-size: 0.85rem; width: 20px;">5</span>
+            </div>
+
+            <div class="tool-group">
+                <button id="toolBrush" class="btn-tool active">🖌️ Кисть</button>
+                <button id="toolEraser" class="btn-tool">🧽 Ластик</button>
+            </div>
+
+            <button id="clearCanvas" class="btn-tool btn-clear">🗑️ Очистить лист</button>
+        </div>
+
+        <div class="workspace">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="paintCanvas"></canvas>
+            </div>
+            <div class="notes-container">
+                <h3 style="font-size: 1rem; color: #475569;">✍️ Заметки на полях:</h3>
+                <textarea id="notebookNotes" placeholder="Сюда можно записывать идеи, мысли или важный текст..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Элементы DOM
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvasContainer');
+        
+        const addNotebookBtn = document.getElementById('addNotebookBtn');
+        const notebookList = document.getElementById('notebookList');
+        const noNotebookOverlay = document.getElementById('noNotebookOverlay');
+        const notebookNotes = document.getElementById('notebookNotes');
+        
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const toolBrush = document.getElementById('toolBrush');
+        const toolEraser = document.getElementById('toolEraser');
+        const clearCanvasBtn = document.getElementById('clearCanvas');
+
+        // Данные приложения
+        let notebooks = [];
+        let activeNotebookId = null;
+        
+        // Настройки рисования
+        let isDrawing = false;
+        let currentMode = 'brush'; // 'brush' или 'eraser'
+        let lastX = 0;
+        let lastY = 0;
+
+        // Автоматическая подгонка размера холста под контейнер
+        function resizeCanvas() {
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+            
+            // Восстанавливаем настройки контекста после изменения размера
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Если выбран блокнот и у него сохранен рисунок — можно было бы восстановить (сделаем в апдейтах)
+            // Пока просто заливаем белым цветом при создании
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- Функция рисования ---
+        function startDrawing(e) {
+            if (!activeNotebookId) return;
+            isDrawing = true;
+            
+            // Получаем координаты с учетом положения холста на экране
+            const rect = canvas.getBoundingClientRect();
+            // Поддержка тач-скринов и мышки
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            lastX = clientX - rect.left;
+            lastY = clientY - rect.top;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // Предотвращаем скролл на мобильных устройствах
+
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const currentX = clientX - rect.left;
+            const currentY = clientY - rect.top;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+
+            // Настройка инструментов
+            if (currentMode === 'eraser') {
+                ctx.strokeStyle = '#ffffff'; // Стираем белым
+            } else {
+                ctx.strokeStyle = colorPicker.value;
+            }
+
+            ctx.lineWidth = brushSize.value;
+            ctx.stroke();
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                saveCurrentNotebookData(); // Сохраняем состояние, когда пользователь отпустил кисть
+            }
+        }
+
+        // Слушатели мыши
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Слушатели тач-событий (для мобильных)
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // --- Инструменты управления ---
+        toolBrush.addEventListener('click', () => {
+            currentMode = 'brush';
+            toolBrush.classList.add('active');
+            toolEraser.classList.remove('active');
+        });
+
+        toolEraser.addEventListener('click', () => {
+            currentMode = 'eraser';
+            toolEraser.classList.add('active');
+            toolBrush.classList.remove('remove');
+            toolBrush.classList.remove('active');
+        });
+
+        brushSize.addEventListener('input', (e) => {
+            sizeValue.textContent = e.target.value;
+        });
+
+        clearCanvasBtn.addEventListener('click', () => {
+            if (confirm('Очистить этот лист? Все рисунки на нем сотрутся.')) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                saveCurrentNotebookData();
+            }
+        });
+
+        // --- Управление блокнотами ---
+        addNotebookBtn.addEventListener('click', () => {
+            const name = prompt('Введите название для нового блокнота:', `Блокнот ${notebooks.length + 1}`);
+            if (name === null || name.trim() === '') return;
+
+            const newNotebook = {
+                id: Date.now().toString(),
+                name: name.trim(),
+                notes: '',
+                canvasData: null // Здесь будет храниться снимок рисунка
+            };
+
+            notebooks.push(newNotebook);
+            renderNotebookList();
+            switchNotebook(newNotebook.id);
+        });
+
+        function renderNotebookList() {
+            notebookList.innerHTML = '';
+            notebooks.forEach(nb => {
+                const li = document.createElement('li');
+                li.className = `notebook-item ${nb.id === activeNotebookId ? 'active' : ''}`;
+                li.textContent = nb.name;
+                li.addEventListener('click', () => switchNotebook(nb.id));
+                notebookList.appendChild(li);
+            });
+
+            // Показываем заглушку, если блокнотов нет
+            if (notebooks.length === 0) {
+                noNotebookOverlay.style.display = 'flex';
+                activeNotebookId = null;
+            } else {
+                noNotebookOverlay.style.display = 'none';
+            }
+        }
+
+        function switchNotebook(id) {
+            if (activeNotebookId === id) return;
+            
+            // Перед переключением сохраняем старый блокнот
+            if (activeNotebookId) {
+                saveCurrentNotebookData();
+            }
+
+            activeNotebookId = id;
+            const currentNb = notebooks.find(nb => nb.id === id);
+            
+            if (currentNb) {
+                // Обновляем список, чтобы подсветить активный
+                renderNotebookList();
+                
+                // Восстанавливаем текст заметок
+                notebookNotes.value = currentNb.notes;
+                
+                // Очищаем холст и восстанавливаем рисунок, если он есть
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (currentNb.canvasData) {
+                    const img = new Image();
+                    img.src = currentNb.canvasData;
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0);
+                    };
+                }
+            }
+        }
+
+        function saveCurrentNotebookData() {
+            if (!activeNotebookId) return;
+            
+            const currentNb = notebooks.find(nb => nb.id === activeNotebookId);
+            if (currentNb) {
+                currentNb.notes = notebookNotes.value;
+                currentNb.canvasData = canvas.toDataURL(); // Превращаем рисунок в текстовую строку
+            }
+        }
+
+        // Сохраняем текст заметок на лету при вводе
+        notebookNotes.addEventListener('input', saveCurrentNotebookData);
+    </script>
+</body>
+</html>
