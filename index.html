@@ -8,8 +8,6 @@
         :root {
             --bg-color: #f5f6fa;
             --sidebar-width: 280px;
-            --primary-color: #74b9ff;
-            --text-color: #2f3640;
             --border-color: #dcdde1;
         }
 
@@ -17,14 +15,14 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             display: flex;
             height: 100vh;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: #2f3640;
             overflow: hidden;
         }
 
@@ -41,9 +39,6 @@
             font-size: 1.25rem;
             margin-bottom: 20px;
             color: #718093;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .btn-add {
@@ -189,7 +184,7 @@
                 linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
             background-size: 24px 24px;
             display: block;
-            cursor: none; /* Курсор мыши полностью скрыт */
+            cursor: none; /* Полностью убираем курсор */
         }
 
         .notes-container {
@@ -225,7 +220,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             z-index: 10;
             color: #718093;
             font-size: 1.2rem;
@@ -242,32 +236,31 @@
 
     <div class="main-content">
         <div class="no-notebook-overlay" id="noNotebookOverlay">
-            <p>✒️ Откройте страницу, чтобы начать рисовать</p>
+            <p>✒️ Откройте страницу, чтобы начать писать или рисовать</p>
         </div>
 
         <div class="toolbar">
             <div class="tool-group">
-                <label>Цвет:</label>
+                <label>Чернила:</label>
                 <input type="color" id="colorPicker" class="color-picker" value="#2f3640">
             </div>
 
             <div class="tool-group">
-                <label>Инструмент:</label>
+                <label>Перо:</label>
                 <select id="brushType" class="select-brush">
-                    <option value="brush">🖌️ Обычная кисть</option>
-                    <option value="pen">✒️ Чернильное перо</option>
-                    <option value="pencil">✏️ Тонкий карандаш</option>
+                    <option value="calligraphy">✒️ Острое перо (с нажимом)</option>
+                    <option value="flat">🖌️ Скошенная кисть (плоская)</option>
                 </select>
             </div>
 
             <div class="tool-group">
-                <label>Размер:</label>
-                <input type="range" id="brushSize" class="brush-size" min="2" max="40" value="10">
-                <span id="sizeValue" style="font-size: 0.9rem; font-weight: bold; width: 20px;">10</span>
+                <label>Макс. размер:</label>
+                <input type="range" id="brushSize" class="brush-size" min="4" max="40" value="12">
+                <span id="sizeValue" style="font-size: 0.9rem; font-weight: bold; width: 20px;">12</span>
             </div>
 
             <div class="tool-group">
-                <button id="toolDraw" class="btn-tool active">🎨 Рисовать</button>
+                <button id="toolDraw" class="btn-tool active">🎨 Писать</button>
                 <button id="toolEraser" class="btn-tool">🧽 Ластик</button>
             </div>
 
@@ -307,8 +300,10 @@
         let activeNotebookId = null;
         let isDrawing = false;
         let currentMode = 'draw'; 
-        let lastX = 0;
-        let lastY = 0;
+        
+        // Храним историю точек для расчета скорости и плавности
+        let lastX = 0, lastY = 0;
+        let lastThickness = 6;
 
         function resizeCanvas() {
             canvas.width = canvasContainer.clientWidth;
@@ -325,6 +320,7 @@
             const pos = getMousePos(e);
             lastX = pos.x;
             lastY = pos.y;
+            lastThickness = parseInt(brushSize.value) / 2;
         }
 
         function draw(e) {
@@ -337,49 +333,57 @@
             ctx.save();
             
             if (currentMode === 'eraser') {
+                // Ластик стирает плотным цветом бумаги
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.strokeStyle = '#fdfbf7'; 
-                ctx.lineWidth = baseSize * 1.5;
+                ctx.lineWidth = baseSize * 2;
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
             } else {
                 const selectedBrush = brushType.value;
-                ctx.strokeStyle = colorPicker.value;
                 ctx.fillStyle = colorPicker.value;
+                ctx.strokeStyle = colorPicker.value;
 
-                if (selectedBrush === 'brush') {
-                    // Классическая круглая кисть
+                // Расстояние для расчета скорости
+                const dist = Math.sqrt(Math.pow(pos.x - lastX, 2) + Math.pow(pos.y - lastY, 2));
+
+                if (selectedBrush === 'calligraphy') {
+                    // 1. ОСТРОЕ ПЕРО С НАЖИМОМ (динамическая толщина)
+                    // Чем быстрее ведем руку, тем тоньше линия. Замедляемся — чернила ложатся гуще.
+                    let targetThickness = baseSize - (dist * 0.8);
+                    if (targetThickness < baseSize * 0.25) targetThickness = baseSize * 0.25;
+                    if (targetThickness > baseSize) targetThickness = baseSize;
+
+                    // Плавный переход толщины, чтобы не было рубленых стыков
+                    let currentThickness = lastThickness + (targetThickness - lastThickness) * 0.3;
+
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
-                    ctx.lineWidth = baseSize;
+                    ctx.lineWidth = currentThickness;
+                    
                     ctx.beginPath();
                     ctx.moveTo(lastX, lastY);
                     ctx.lineTo(pos.x, pos.y);
                     ctx.stroke();
+
+                    lastThickness = currentThickness;
                 } 
-                else if (selectedBrush === 'pencil') {
-                    // Тонкий карандаш
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.lineWidth = Math.max(1, baseSize * 0.2); // Всегда тонкий
-                    ctx.beginPath();
-                    ctx.moveTo(lastX, lastY);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.stroke();
-                }
-                else if (selectedBrush === 'pen') {
-                    // Чернильное каллиграфическое перо
-                    const dist = Math.sqrt(Math.pow(pos.x - lastX, 2) + Math.pow(pos.y - lastY, 2));
-                    const steps = Math.max(Math.floor(dist / 0.5), 1);
+                else if (selectedBrush === 'flat') {
+                    // 2. СКОШЕННАЯ ПЛОСКАЯ КИСТЬ (каллиграфический срез)
+                    // Плотные чернила, форма мазка — эллипс под углом 45 градусов.
+                    const steps = Math.max(Math.floor(dist / 0.3), 1);
+                    
                     for (let i = 0; i < steps; i++) {
                         const t = i / steps;
                         const x = lastX + (pos.x - lastX) * t;
                         const y = lastY + (pos.y - lastY) * t;
+                        
                         ctx.beginPath();
-                        ctx.ellipse(x, y, baseSize / 2, baseSize / 6, Math.PI / 4, 0, 2 * Math.PI);
+                        // Рисуем плотную скошенную плашку чернил без прозрачности
+                        ctx.ellipse(x, y, baseSize / 2, baseSize / 8, Math.PI / 4, 0, 2 * Math.PI);
                         ctx.fill();
                     }
                 }
