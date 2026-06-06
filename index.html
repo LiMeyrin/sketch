@@ -28,7 +28,6 @@
             overflow: hidden;
         }
 
-        /* Боковая панель */
         .sidebar {
             width: var(--sidebar-width);
             background-color: #ffffff;
@@ -36,7 +35,6 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.02);
         }
 
         .sidebar h2 {
@@ -56,13 +54,7 @@
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
             margin-bottom: 20px;
-        }
-
-        .btn-add:hover {
-            background-color: #718093;
-            transform: translateY(-1px);
         }
 
         .notebook-list {
@@ -76,24 +68,16 @@
             border-radius: 10px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s;
             background-color: #f5f6fa;
-            border: 1px solid transparent;
             font-weight: 500;
-        }
-
-        .notebook-item:hover {
-            background-color: #dcdde1;
         }
 
         .notebook-item.active {
             background-color: #fbc531;
             color: #2f3640;
             font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* Главная область */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -102,7 +86,6 @@
             position: relative;
         }
 
-        /* Инструменты */
         .toolbar {
             height: 75px;
             background-color: white;
@@ -123,7 +106,6 @@
             font-size: 0.9rem;
             color: #718093;
             font-weight: 600;
-            white-space: nowrap;
         }
 
         .color-picker {
@@ -143,7 +125,6 @@
 
         .brush-size {
             cursor: pointer;
-            accent-color: #2f3640;
             width: 100px;
         }
 
@@ -154,7 +135,6 @@
             background-color: #f5f6fa;
             font-size: 0.9rem;
             font-weight: 500;
-            outline: none;
             cursor: pointer;
         }
 
@@ -165,17 +145,11 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-tool:hover {
-            background: #dcdde1;
         }
 
         .btn-tool.active {
             background: #2f3640;
             color: white;
-            border-color: #2f3640;
         }
 
         .btn-clear {
@@ -183,15 +157,11 @@
             background-color: #f5f6fa;
             color: #e84118;
             border: 1px solid #dcdde1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .btn-clear:hover {
-            background-color: #e84118;
-            color: white;
-            border-color: #e84118;
-        }
-
-        /* Рабочая область */
         .workspace {
             flex-grow: 1;
             display: flex;
@@ -204,7 +174,6 @@
             flex-grow: 1;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -220,7 +189,7 @@
                 linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
             background-size: 24px 24px;
             display: block;
-            cursor: none; /* Убираем курсор мыши полностью */
+            cursor: none; /* Курсор мыши полностью скрыт */
         }
 
         .notes-container {
@@ -240,7 +209,6 @@
             font-size: 1rem;
             line-height: 1.6;
             outline: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.02);
             background: #fdfbf7;
             background-image: linear-gradient(#dcdde1 1px, transparent 1px);
             background-size: 100% 1.6rem;
@@ -261,3 +229,266 @@
             z-index: 10;
             color: #718093;
             font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>📒 Мой Блокнот</h2>
+        <button class="btn-add" id="addNotebookBtn">+ Добавить страницу</button>
+        <ul class="notebook-list" id="notebookList"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="no-notebook-overlay" id="noNotebookOverlay">
+            <p>✒️ Откройте страницу, чтобы начать рисовать</p>
+        </div>
+
+        <div class="toolbar">
+            <div class="tool-group">
+                <label>Цвет:</label>
+                <input type="color" id="colorPicker" class="color-picker" value="#2f3640">
+            </div>
+
+            <div class="tool-group">
+                <label>Инструмент:</label>
+                <select id="brushType" class="select-brush">
+                    <option value="brush">🖌️ Обычная кисть</option>
+                    <option value="pen">✒️ Чернильное перо</option>
+                    <option value="pencil">✏️ Тонкий карандаш</option>
+                </select>
+            </div>
+
+            <div class="tool-group">
+                <label>Размер:</label>
+                <input type="range" id="brushSize" class="brush-size" min="2" max="40" value="10">
+                <span id="sizeValue" style="font-size: 0.9rem; font-weight: bold; width: 20px;">10</span>
+            </div>
+
+            <div class="tool-group">
+                <button id="toolDraw" class="btn-tool active">🎨 Рисовать</button>
+                <button id="toolEraser" class="btn-tool">🧽 Ластик</button>
+            </div>
+
+            <button id="clearCanvas" class="btn-clear">🗑️ Очистить лист</button>
+        </div>
+
+        <div class="workspace">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="paintCanvas"></canvas>
+            </div>
+            <div class="notes-container">
+                <h3 style="font-size: 1rem; color: #718093; font-weight: 600;">✍️ Заметки:</h3>
+                <textarea id="notebookNotes" placeholder="Место для мыслей..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvasContainer');
+        
+        const addNotebookBtn = document.getElementById('addNotebookBtn');
+        const notebookList = document.getElementById('notebookList');
+        const noNotebookOverlay = document.getElementById('noNotebookOverlay');
+        const notebookNotes = document.getElementById('notebookNotes');
+        
+        const colorPicker = document.getElementById('colorPicker');
+        const brushType = document.getElementById('brushType');
+        const brushSize = document.getElementById('brushSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const toolDraw = document.getElementById('toolDraw');
+        const toolEraser = document.getElementById('toolEraser');
+        const clearCanvasBtn = document.getElementById('clearCanvas');
+
+        let notebooks = [];
+        let activeNotebookId = null;
+        let isDrawing = false;
+        let currentMode = 'draw'; 
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+            if (activeNotebookId) restoreCanvas();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startDrawing(e) {
+            if (!activeNotebookId) return;
+            isDrawing = true;
+            const pos = getMousePos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+
+            const pos = getMousePos(e);
+            const baseSize = parseInt(brushSize.value);
+            
+            ctx.save();
+            
+            if (currentMode === 'eraser') {
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#fdfbf7'; 
+                ctx.lineWidth = baseSize * 1.5;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            } else {
+                const selectedBrush = brushType.value;
+                ctx.strokeStyle = colorPicker.value;
+                ctx.fillStyle = colorPicker.value;
+
+                if (selectedBrush === 'brush') {
+                    // Классическая круглая кисть
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.lineWidth = baseSize;
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.stroke();
+                } 
+                else if (selectedBrush === 'pencil') {
+                    // Тонкий карандаш
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.lineWidth = Math.max(1, baseSize * 0.2); // Всегда тонкий
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.stroke();
+                }
+                else if (selectedBrush === 'pen') {
+                    // Чернильное каллиграфическое перо
+                    const dist = Math.sqrt(Math.pow(pos.x - lastX, 2) + Math.pow(pos.y - lastY, 2));
+                    const steps = Math.max(Math.floor(dist / 0.5), 1);
+                    for (let i = 0; i < steps; i++) {
+                        const t = i / steps;
+                        const x = lastX + (pos.x - lastX) * t;
+                        const y = lastY + (pos.y - lastY) * t;
+                        ctx.beginPath();
+                        ctx.ellipse(x, y, baseSize / 2, baseSize / 6, Math.PI / 4, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            ctx.restore();
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                saveCurrentNotebookData();
+            }
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        toolDraw.addEventListener('click', () => {
+            currentMode = 'draw';
+            toolDraw.classList.add('active');
+            toolEraser.classList.remove('active');
+        });
+
+        toolEraser.addEventListener('click', () => {
+            currentMode = 'eraser';
+            toolEraser.classList.add('active');
+            toolDraw.classList.remove('active');
+        });
+
+        brushSize.addEventListener('input', (e) => {
+            sizeValue.textContent = e.target.value;
+        });
+
+        clearCanvasBtn.addEventListener('click', () => {
+            if (confirm('Очистить эту страницу блокнота?')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                saveCurrentNotebookData();
+            }
+        });
+
+        addNotebookBtn.addEventListener('click', () => {
+            const name = prompt('Назовите новую страницу:', `Страница ${notebooks.length + 1}`);
+            if (name === null || name.trim() === '') return;
+
+            const newNotebook = { id: Date.now().toString(), name: name.trim(), notes: '', canvasData: null };
+            notebooks.push(newNotebook);
+            renderNotebookList();
+            switchNotebook(newNotebook.id);
+        });
+
+        function renderNotebookList() {
+            notebookList.innerHTML = '';
+            notebooks.forEach(nb => {
+                const li = document.createElement('li');
+                li.className = `notebook-item ${nb.id === activeNotebookId ? 'active' : ''}`;
+                li.textContent = nb.name;
+                li.addEventListener('click', () => switchNotebook(nb.id));
+                notebookList.appendChild(li);
+            });
+            noNotebookOverlay.style.display = notebooks.length === 0 ? 'flex' : 'none';
+        }
+
+        function switchNotebook(id) {
+            if (activeNotebookId === id) return;
+            if (activeNotebookId) saveCurrentNotebookData();
+            activeNotebookId = id;
+            const currentNb = notebooks.find(nb => nb.id === id);
+            if (currentNb) {
+                renderNotebookList();
+                notebookNotes.value = currentNb.notes;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                restoreCanvas();
+            }
+        }
+
+        function saveCurrentNotebookData() {
+            if (!activeNotebookId) return;
+            const currentNb = notebooks.find(nb => nb.id === activeNotebookId);
+            if (currentNb) {
+                currentNb.notes = notebookNotes.value;
+                currentNb.canvasData = canvas.toDataURL();
+            }
+        }
+
+        function restoreCanvas() {
+            const currentNb = notebooks.find(nb => nb.id === activeNotebookId);
+            if (currentNb && currentNb.canvasData) {
+                const img = new Image();
+                img.src = currentNb.canvasData;
+                img.onload = () => ctx.drawImage(img, 0, 0);
+            }
+        }
+
+        notebookNotes.addEventListener('input', saveCurrentNotebookData);
+    </script>
+</body>
+</html>
