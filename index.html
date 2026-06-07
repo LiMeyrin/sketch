@@ -3,496 +3,702 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Творческий Блокнот</title>
+    <title>🌸 Изучаем Хангыль вместе! 🌸</title>
     <style>
         :root {
-            --bg-color: #f5f6fa;
-            --sidebar-width: 280px;
-            --border-color: #dcdde1;
+            --bg-pastel: #fff5f7;
+            --anime-pink: #ffb7c5;
+            --anime-purple: #e8dbfc;
+            --anime-blue: #cbe3db;
+            --anime-mint: #d4f0f0;
+            --text-dark: #4a4a4a;
+            --card-bg: #ffffff;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
-            display: flex;
-            height: 100vh;
-            background-color: var(--bg-color);
-            color: #2f3640;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: #ffffff;
-            border-right: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-pastel) 0%, #f3e7ff 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        .sidebar h2 {
-            font-size: 1.25rem;
-            margin-bottom: 20px;
-            color: #718093;
-        }
-
-        .btn-add {
-            background-color: #2f3640;
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        .notebook-list {
-            list-style: none;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .notebook-item {
-            padding: 14px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            background-color: #f5f6fa;
-            font-weight: 500;
-        }
-
-        .notebook-item.active {
-            background-color: #fbc531;
-            color: #2f3640;
-            font-weight: 600;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-        }
-
-        .toolbar {
-            height: 75px;
-            background-color: white;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            gap: 20px;
-        }
-
-        .tool-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tool-group label {
-            font-size: 0.9rem;
-            color: #718093;
-            font-weight: 600;
-        }
-
-        .color-picker {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 38px;
-            height: 38px;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-        }
-
-        .color-picker::-webkit-color-swatch {
-            border-radius: 50%;
-            border: 2px solid #dcdde1;
-        }
-
-        .brush-size {
-            cursor: pointer;
-            width: 100px;
-        }
-
-        .select-brush {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #f5f6fa;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .btn-tool {
-            background: #f5f6fa;
-            border: 1px solid var(--border-color);
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-tool.active {
-            background: #2f3640;
-            color: white;
-        }
-
-        .btn-clear {
-            margin-left: auto;
-            background-color: #f5f6fa;
-            color: #e84118;
-            border: 1px solid #dcdde1;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .workspace {
-            flex-grow: 1;
-            display: flex;
-            padding: 25px;
-            gap: 25px;
-            overflow: hidden;
-        }
-
-        .canvas-container {
-            flex-grow: 1;
-            background: white;
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #e1b12c;
-        }
-
-        canvas {
-            background-color: #fdfbf7;
-            background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-            background-size: 24px 24px;
-            display: block;
-            cursor: none; /* Полностью убираем курсор */
-        }
-
-        .notes-container {
-            width: 340px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .notes-container textarea {
-            flex-grow: 1;
+        .game-container {
             width: 100%;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            resize: none;
-            font-size: 1rem;
-            line-height: 1.6;
-            outline: none;
-            background: #fdfbf7;
-            background-image: linear-gradient(#dcdde1 1px, transparent 1px);
-            background-size: 100% 1.6rem;
-            color: #2f3640;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            border: 4px solid var(--anime-pink);
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(255, 183, 197, 0.3);
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .no-notebook-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #f5f6fa;
+        h1 {
+            font-size: 2rem;
+            color: #d65a7f;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        .level-indicator {
+            background: var(--anime-purple);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #6c5ce7;
+            border: 2px solid #ffffff;
+        }
+
+        .level-description {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 500;
+            color: #57606f;
+        }
+
+        /* Зона букв для перетаскивания */
+        .letters-bank {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            min-height: 90px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            border: 2px dashed var(--anime-pink);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .letter {
+            width: 65px;
+            height: 65px;
+            background: var(--card-bg);
+            border: 3px solid var(--anime-pink);
+            border-radius: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            color: #718093;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: grab;
+            box-shadow: 0 6px 0px var(--anime-pink);
+            transition: transform 0.1s, box-shadow 0.1s;
+            touch-action: none;
+        }
+
+        .letter:active {
+            cursor: grabbing;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px var(--anime-pink);
+        }
+
+        /* Главная рабочая зона игры */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            margin-bottom: 30px;
+        }
+
+        /* Окна для уровней 1 и 2 */
+        .target-box {
+            width: 140px;
+            height: 140px;
+            background: #fff;
+            border: 4px dashed #9bc5ff;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .target-box.hovered {
+            background: #eef5ff;
+            border-color: #54a0ff;
+        }
+
+        /* Облачка с подсказками и заданиями */
+        .cloud-result {
+            margin-top: 20px;
+            background: #ffffff;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d65a7f;
+            border: 3px solid var(--anime-purple);
+            box-shadow: 0 8px 0 var(--anime-purple);
+            display: inline-block;
+            animation: float 2s ease-in-out infinite;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cloud-result.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* Уровень 3 и 5: Облака с кружочками */
+        .clouds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .cloud-task {
+            background: #ffffff;
+            border: 3px solid #b7e4ff;
+            border-radius: 30px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 0 #b7e4ff;
+        }
+
+        .cloud-task .sound-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2e86de;
+        }
+
+        .slots-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px;
+        }
+
+        /* Направления осей для кружочков */
+        .dir-row { flex-direction: row; }
+        .dir-column { flex-direction: column; }
+
+        .circle-slot {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px dashed #b7e4ff;
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .circle-slot.hovered {
+            background: #eef5ff;
+            border-color: #54a0ff;
+        }
+        
+        .circle-slot .letter {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: none;
+            font-size: 1.4rem;
+        }
+
+        /* УРОВЕНЬ 4: Адаптивный конструктор слогов */
+        .constructor-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            transition: all 0.4s ease;
+        }
+
+        .syllable-box {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 25px;
+            border: 3px solid var(--anime-purple);
+        }
+
+        .slot-consonant { border-color: #ff9ff3; background: #fff5fd; }
+        .slot-vowel { border-color: #feca57; background: #fffdf0; }
+
+        .arrow-indicator {
+            font-size: 2.5rem;
+            color: #cf6a87;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Кнопка навигации */
+        .btn-next {
+            background: linear-gradient(to bottom, #ff9ff3, #f368e0);
+            color: white;
+            border: none;
+            padding: 14px 40px;
             font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #c842b2, 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.1s;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .btn-next:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #c842b2, 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .dragging {
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>📒 Мой Блокнот</h2>
-        <button class="btn-add" id="addNotebookBtn">+ Добавить страницу</button>
-        <ul class="notebook-list" id="notebookList"></ul>
-    </div>
+    <div class="game-container">
+        <h1 id="gameTitle">🌸 Корейский экспресс 🌸</h1>
+        <div class="level-indicator" id="levelIndicator">Уровень 1/5</div>
+        <div class="level-description" id="levelDesc">Перетащи гласную букву в окошко, чтобы узнать её звучание!</div>
 
-    <div class="main-content">
-        <div class="no-notebook-overlay" id="noNotebookOverlay">
-            <p>✒️ Откройте страницу, чтобы начать писать или рисовать</p>
-        </div>
+        <!-- Банк доступных букв -->
+        <div class="letters-bank" id="lettersBank"></div>
 
-        <div class="toolbar">
-            <div class="tool-group">
-                <label>Чернила:</label>
-                <input type="color" id="colorPicker" class="color-picker" value="#2f3640">
-            </div>
+        <!-- Рабочее пространство уровня -->
+        <div class="workspace" id="workspace"></div>
 
-            <div class="tool-group">
-                <label>Перо:</label>
-                <select id="brushType" class="select-brush">
-                    <option value="calligraphy">✒️ Острое перо (с нажимом)</option>
-                    <option value="flat">🖌️ Скошенная кисть (плоская)</option>
-                </select>
-            </div>
-
-            <div class="tool-group">
-                <label>Макс. размер:</label>
-                <input type="range" id="brushSize" class="brush-size" min="4" max="40" value="12">
-                <span id="sizeValue" style="font-size: 0.9rem; font-weight: bold; width: 20px;">12</span>
-            </div>
-
-            <div class="tool-group">
-                <button id="toolDraw" class="btn-tool active">🎨 Писать</button>
-                <button id="toolEraser" class="btn-tool">🧽 Ластик</button>
-            </div>
-
-            <button id="clearCanvas" class="btn-clear">🗑️ Очистить лист</button>
-        </div>
-
-        <div class="workspace">
-            <div class="canvas-container" id="canvasContainer">
-                <canvas id="paintCanvas"></canvas>
-            </div>
-            <div class="notes-container">
-                <h3 style="font-size: 1rem; color: #718093; font-weight: 600;">✍️ Заметки:</h3>
-                <textarea id="notebookNotes" placeholder="Место для мыслей..."></textarea>
-            </div>
-        </div>
+        <!-- Кнопка перехода к следующему шагу -->
+        <button class="btn-next" id="btnNext">Дальше ✨</button>
     </div>
 
     <script>
-        const canvas = document.getElementById('paintCanvas');
-        const ctx = canvas.getContext('2d');
-        const canvasContainer = document.getElementById('canvasContainer');
-        
-        const addNotebookBtn = document.getElementById('addNotebookBtn');
-        const notebookList = document.getElementById('notebookList');
-        const noNotebookOverlay = document.getElementById('noNotebookOverlay');
-        const notebookNotes = document.getElementById('notebookNotes');
-        
-        const colorPicker = document.getElementById('colorPicker');
-        const brushType = document.getElementById('brushType');
-        const brushSize = document.getElementById('brushSize');
-        const sizeValue = document.getElementById('sizeValue');
-        const toolDraw = document.getElementById('toolDraw');
-        const toolEraser = document.getElementById('toolEraser');
-        const clearCanvasBtn = document.getElementById('clearCanvas');
+        // Данные игры
+        const vowels = [
+            { char: 'ㅏ', sound: 'а', type: 'vertical' },
+            { char: 'ㅓ', sound: 'о (откр.)', type: 'vertical' },
+            { char: 'ㅜ', sound: 'у', type: 'horizontal' },
+            { char: 'ㅗ', sound: 'о (закр.)', type: 'horizontal' }
+        ];
 
-        let notebooks = [];
-        let activeNotebookId = null;
-        let isDrawing = false;
-        let currentMode = 'draw'; 
-        
-        // Храним историю точек для расчета скорости и плавности
-        let lastX = 0, lastY = 0;
-        let lastThickness = 6;
+        const consonants = [
+            { char: 'ㅁ', sound: 'м' },
+            { char: 'ㄴ', sound: 'н' },
+            { char: 'ㄹ', sound: 'р' }
+        ];
 
-        function resizeCanvas() {
-            canvas.width = canvasContainer.clientWidth;
-            canvas.height = canvasContainer.clientHeight;
-            if (activeNotebookId) restoreCanvas();
+        // Карта слогов для 4 и 5 уровней
+        const syllablesMap = {
+            'ㅁㅏ': 'ма', 'ㅁㅓ': 'мо (откр.)', 'ㅁㅜ': 'му', 'ㅁㅗ': 'мо (закр.)',
+            'ㄴㅏ': 'на', 'ㄴㅓ': 'но (откр.)', 'ㄴㅜ': 'ну', 'ㄴㅗ': 'но (закр.)',
+            'ㄹㅏ': 'ра', 'ㄹㅓ': 'ро (откр.)', 'ㄹㅜ': 'ру', 'ㄹㅗ': 'ро (закр.)'
+        };
+
+        let currentLevel = 1;
+        let draggedElement = null;
+
+        const bankElement = document.getElementById('lettersBank');
+        const workspace = document.getElementById('workspace');
+        const btnNext = document.getElementById('btnNext');
+        const levelIndicator = document.getElementById('levelIndicator');
+        const levelDesc = document.getElementById('levelDesc');
+
+        function initLevel(level) {
+            currentLevel = level;
+            bankElement.innerHTML = '';
+            workspace.innerHTML = '';
+            btnNext.style.display = 'none';
+            levelIndicator.textContent = `Уровень ${level}/5`;
+
+            if (level === 1) {
+                levelDesc.textContent = "Перетащи гласную букву в окошко, чтобы узнать её звучание!";
+                renderBank(vowels);
+                createSingleTargetBox();
+            } else if (level === 2) {
+                levelDesc.textContent = "А теперь перетащи согласную букву в окошко и запомни звук!";
+                renderBank(consonants);
+                createSingleTargetBox();
+            } else if (level === 3) {
+                levelDesc.textContent = "Повторение! Разложи все гласные и согласные по облачкам со звуками!";
+                const allElements = [...consonants, ...vowels];
+                renderBank(shuffleArray(allElements));
+                createMatchingClouds(allElements);
+            } else if (level === 4) {
+                levelDesc.textContent = "Конструктор слогов! Поставь согласную и гласную. Окна сами подстроятся!";
+                const allElements = [...consonants, ...vowels];
+                renderBank(shuffleArray(allElements));
+                createSyllableConstructor();
+            } else if (level === 5) {
+                levelDesc.textContent = "Финал! Собери слоги. Кружочки встанут в ряд или друг под друга в зависимости от «О» или «У»!";
+                const allElements = [...consonants, ...vowels];
+                // Даем игроку достаточно букв для сборки всех 4 слогов
+                renderBank(shuffleArray([...allElements, ...allElements])); 
+                createFinalSyllableClouds();
+            }
+            setupDragAndDrop();
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function startDrawing(e) {
-            if (!activeNotebookId) return;
-            isDrawing = true;
-            const pos = getMousePos(e);
-            lastX = pos.x;
-            lastY = pos.y;
-            lastThickness = parseInt(brushSize.value) / 2;
+        function renderBank(items) {
+            items.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'letter';
+                el.textContent = item.char;
+                el.draggable = true;
+                el.dataset.char = item.char;
+                el.dataset.sound = item.sound;
+                el.dataset.type = item.type || '';
+                el.id = `letter-${currentLevel}-${index}`;
+                bankElement.appendChild(el);
+            });
         }
 
-        function draw(e) {
-            if (!isDrawing) return;
-            e.preventDefault();
-
-            const pos = getMousePos(e);
-            const baseSize = parseInt(brushSize.value);
+        function createSingleTargetBox() {
+            const box = document.createElement('div');
+            box.className = 'target-box';
+            box.id = 'singleTarget';
             
-            ctx.save();
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud-result';
+            cloud.id = 'singleCloud';
+
+            workspace.appendChild(box);
+            workspace.appendChild(cloud);
+        }
+
+        function createMatchingClouds(items) {
+            const grid = document.createElement('div');
+            grid.className = 'clouds-grid';
             
-            if (currentMode === 'eraser') {
-                // Ластик стирает плотным цветом бумаги
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.strokeStyle = '#fdfbf7'; 
-                ctx.lineWidth = baseSize * 2;
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.stroke();
-            } else {
-                const selectedBrush = brushType.value;
-                ctx.fillStyle = colorPicker.value;
-                ctx.strokeStyle = colorPicker.value;
+            items.forEach(item => {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud-task';
+                
+                const label = document.createElement('span');
+                label.className = 'sound-text';
+                label.textContent = `Звук: [${item.sound.toUpperCase()}]`;
+                
+                const slot = document.createElement('div');
+                slot.className = 'circle-slot';
+                slot.dataset.expected = item.char;
 
-                // Расстояние для расчета скорости
-                const dist = Math.sqrt(Math.pow(pos.x - lastX, 2) + Math.pow(pos.y - lastY, 2));
+                cloud.appendChild(label);
+                cloud.appendChild(slot);
+                grid.appendChild(cloud);
+            });
+            workspace.appendChild(grid);
+        }
 
-                if (selectedBrush === 'calligraphy') {
-                    // 1. ОСТРОЕ ПЕРО С НАЖИМОМ (динамическая толщина)
-                    // Чем быстрее ведем руку, тем тоньше линия. Замедляемся — чернила ложатся гуще.
-                    let targetThickness = baseSize - (dist * 0.8);
-                    if (targetThickness < baseSize * 0.25) targetThickness = baseSize * 0.25;
-                    if (targetThickness > baseSize) targetThickness = baseSize;
+        function createSyllableConstructor() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'constructor-layout';
+            wrapper.id = 'constructorLayout';
 
-                    // Плавный переход толщины, чтобы не было рубленых стыков
-                    let currentThickness = lastThickness + (targetThickness - lastThickness) * 0.3;
+            const container = document.createElement('div');
+            container.className = 'syllable-box dir-row';
+            container.id = 'syllableBox';
 
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.lineWidth = currentThickness;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(lastX, lastY);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.stroke();
+            const slotC = document.createElement('div');
+            slotC.className = 'target-box slot-consonant';
+            slotC.id = 'slotC';
+            slotC.dataset.expectType = 'consonant';
 
-                    lastThickness = currentThickness;
-                } 
-                else if (selectedBrush === 'flat') {
-                    // 2. СКОШЕННАЯ ПЛОСКАЯ КИСТЬ (каллиграфический срез)
-                    // Плотные чернила, форма мазка — эллипс под углом 45 градусов.
-                    const steps = Math.max(Math.floor(dist / 0.3), 1);
-                    
-                    for (let i = 0; i < steps; i++) {
-                        const t = i / steps;
-                        const x = lastX + (pos.x - lastX) * t;
-                        const y = lastY + (pos.y - lastY) * t;
-                        
-                        ctx.beginPath();
-                        // Рисуем плотную скошенную плашку чернил без прозрачности
-                        ctx.ellipse(x, y, baseSize / 2, baseSize / 8, Math.PI / 4, 0, 2 * Math.PI);
-                        ctx.fill();
-                    }
+            const slotV = document.createElement('div');
+            slotV.className = 'target-box slot-vowel';
+            slotV.id = 'slotV';
+            slotV.dataset.expectType = 'vowel';
+
+            const arrow = document.createElement('div');
+            arrow.className = 'arrow-indicator';
+            arrow.id = 'arrowInd';
+            arrow.textContent = '→';
+
+            container.appendChild(slotC);
+            container.appendChild(slotV);
+
+            const resCloud = document.createElement('div');
+            resCloud.className = 'cloud-result';
+            resCloud.id = 'constructorCloud';
+
+            wrapper.appendChild(container);
+            wrapper.appendChild(arrow);
+            
+            workspace.appendChild(wrapper);
+            workspace.appendChild(resCloud);
+        }
+
+        function createFinalSyllableClouds() {
+            const grid = document.createElement('div');
+            grid.className = 'clouds-grid';
+
+            // Список слогов: здесь две разные «О» дают разную ориентацию кружочков!
+            const tasks = [
+                { rus: 'ма', c: 'ㅁ', v: 'ㅏ', type: 'vertical' },      // Слева направо
+                { rus: 'но (откр.)', c: 'ㄴ', v: 'ㅓ', type: 'vertical' }, // Слева направо (ㅓ)
+                { rus: 'ру', c: 'ㄹ', v: 'ㅜ', type: 'horizontal' },    // Сверху вниз
+                { rus: 'но (закр.)', c: 'ㄴ', v: 'ㅗ', type: 'horizontal' } // Сверху вниз (ㅗ)
+            ];
+
+            tasks.forEach(task => {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud-task';
+
+                const label = document.createElement('span');
+                label.className = 'sound-text';
+                label.textContent = `Слог: "${task.rus.toUpperCase()}"`;
+
+                const slotsDiv = document.createElement('div');
+                slotsDiv.className = `slots-container ${task.type === 'vertical' ? 'dir-row' : 'dir-column'}`;
+
+                const sC = document.createElement('div');
+                sC.className = 'circle-slot slot-consonant';
+                sC.dataset.expected = task.c;
+
+                const sV = document.createElement('div');
+                sV.className = 'circle-slot slot-vowel';
+                sV.dataset.expected = task.v;
+
+                slotsDiv.appendChild(sC);
+                slotsDiv.appendChild(sV);
+                cloud.appendChild(label);
+                cloud.appendChild(slotsDiv);
+                grid.appendChild(cloud);
+            });
+
+            workspace.appendChild(grid);
+        }
+
+        function setupDragAndDrop() {
+            const letters = document.querySelectorAll('.letter');
+            
+            letters.forEach(letter => {
+                letter.addEventListener('dragstart', handleDragStart);
+                letter.addEventListener('dragend', handleDragEnd);
+                
+                letter.addEventListener('touchstart', handleTouchStart, {passive: false});
+                letter.addEventListener('touchmove', handleTouchMove, {passive: false});
+                letter.addEventListener('touchend', handleTouchEnd);
+            });
+
+            if (currentLevel === 1 || currentLevel === 2) {
+                setupTarget(document.getElementById('singleTarget'), checkLevel1and2);
+            } else if (currentLevel === 3) {
+                document.querySelectorAll('.circle-slot').forEach(slot => {
+                    setupTarget(slot, checkLevel3);
+                });
+            } else if (currentLevel === 4) {
+                setupTarget(document.getElementById('slotC'), checkLevel4);
+                setupTarget(document.getElementById('slotV'), checkLevel4);
+            } else if (currentLevel === 5) {
+                document.querySelectorAll('.circle-slot').forEach(slot => {
+                    setupTarget(slot, checkLevel5);
+                });
+            }
+        }
+
+        function setupTarget(target, dropHandler) {
+            if(!target) return;
+            target.addEventListener('dragover', (e) => e.preventDefault());
+            target.addEventListener('dragenter', () => target.classList.add('hovered'));
+            target.addEventListener('dragleave', () => target.classList.remove('hovered'));
+            target.addEventListener('drop', (e) => {
+                target.classList.remove('hovered');
+                const id = e.dataTransfer.getData('text/plain');
+                const dragged = document.getElementById(id) || draggedElement;
+                if(dragged) dropHandler(target, dragged);
+            });
+        }
+
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', this.id);
+            this.classList.add('dragging');
+            draggedElement = this;
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+        }
+
+        function handleTouchStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault(); 
+            const touch = e.touches[0];
+            this.style.position = 'absolute';
+            this.style.left = (touch.clientX - 32) + 'px';
+            this.style.top = (touch.clientY - 32) + 'px';
+            this.style.zIndex = 1000;
+        }
+
+        function handleTouchEnd(e) {
+            this.classList.remove('dragging');
+            this.style.position = 'static';
+            this.style.zIndex = 'auto';
+
+            const touch = e.changedTouches[0];
+            const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (targetEl) {
+                const targetBox = targetEl.closest('.target-box') || targetEl.closest('.circle-slot');
+                if (targetBox) {
+                    if (currentLevel === 1 || currentLevel === 2) checkLevel1and2(targetBox, this);
+                    if (currentLevel === 3) checkLevel3(targetBox, this);
+                    if (currentLevel === 4) checkLevel4(targetBox, this);
+                    if (currentLevel === 5) checkLevel5(targetBox, this);
                 }
             }
+            draggedElement = null;
+        }
+
+        function checkLevel1and2(target, dragged) {
+            target.innerHTML = '';
+            const clone = dragged.cloneNode(true);
+            clone.style.position = 'static';
+            target.appendChild(clone);
+
+            const cloud = document.getElementById('singleCloud');
+            cloud.textContent = `Звучит как: [ ${dragged.dataset.sound.toUpperCase()} ]`;
+            cloud.classList.add('show');
+
+            btnNext.style.display = 'inline-block';
+        }
+
+        function checkLevel3(target, dragged) {
+            if (target.dataset.expected === dragged.dataset.char) {
+                target.innerHTML = '';
+                const clone = dragged.cloneNode(true);
+                clone.style.position = 'static';
+                target.appendChild(clone);
+                dragged.remove();
+                checkWinConditionLevel3();
+            }
+        }
+
+        function checkWinConditionLevel3() {
+            const slots = document.querySelectorAll('.circle-slot');
+            let allFilled = true;
+            slots.forEach(s => { if(s.children.length === 0) allFilled = false; });
+            if (allFilled) btnNext.style.display = 'inline-block';
+        }
+
+        function checkLevel4(target, dragged) {
+            const isVowel = dragged.dataset.type !== ''; 
             
-            ctx.restore();
-            lastX = pos.x;
-            lastY = pos.y;
-        }
+            if (target.id === 'slotC' && isVowel) return;
+            if (target.id === 'slotV' && !isVowel) return;
 
-        function stopDrawing() {
-            if (isDrawing) {
-                isDrawing = false;
-                saveCurrentNotebookData();
+            target.innerHTML = '';
+            const clone = dragged.cloneNode(true);
+            clone.style.position = 'static';
+            target.appendChild(clone);
+
+            if (target.id === 'slotV') {
+                const box = document.getElementById('syllableBox');
+                const arrow = document.getElementById('arrowInd');
+                
+                if (dragged.dataset.type === 'vertical') {
+                    box.className = 'syllable-box dir-row';
+                    arrow.textContent = '→';
+                } else if (dragged.dataset.type === 'horizontal') {
+                    box.className = 'syllable-box dir-column';
+                    arrow.textContent = '↓';
+                }
+            }
+
+            const slotC = document.getElementById('slotC');
+            const slotV = document.getElementById('slotV');
+
+            if (slotC.children.length > 0 && slotV.children.length > 0) {
+                const charC = slotC.children[0].dataset.char;
+                const charV = slotV.children[0].dataset.char;
+                const key = charC + charV;
+
+                const cloud = document.getElementById('constructorCloud');
+                if (syllablesMap[key]) {
+                    cloud.textContent = `Получился слог: "${syllablesMap[key].toUpperCase()}" ✨`;
+                    cloud.classList.add('show');
+                    btnNext.style.display = 'inline-block';
+                }
             }
         }
 
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchmove', draw);
-        canvas.addEventListener('touchend', stopDrawing);
-
-        toolDraw.addEventListener('click', () => {
-            currentMode = 'draw';
-            toolDraw.classList.add('active');
-            toolEraser.classList.remove('active');
-        });
-
-        toolEraser.addEventListener('click', () => {
-            currentMode = 'eraser';
-            toolEraser.classList.add('active');
-            toolDraw.classList.remove('active');
-        });
-
-        brushSize.addEventListener('input', (e) => {
-            sizeValue.textContent = e.target.value;
-        });
-
-        clearCanvasBtn.addEventListener('click', () => {
-            if (confirm('Очистить эту страницу блокнота?')) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                saveCurrentNotebookData();
-            }
-        });
-
-        addNotebookBtn.addEventListener('click', () => {
-            const name = prompt('Назовите новую страницу:', `Страница ${notebooks.length + 1}`);
-            if (name === null || name.trim() === '') return;
-
-            const newNotebook = { id: Date.now().toString(), name: name.trim(), notes: '', canvasData: null };
-            notebooks.push(newNotebook);
-            renderNotebookList();
-            switchNotebook(newNotebook.id);
-        });
-
-        function renderNotebookList() {
-            notebookList.innerHTML = '';
-            notebooks.forEach(nb => {
-                const li = document.createElement('li');
-                li.className = `notebook-item ${nb.id === activeNotebookId ? 'active' : ''}`;
-                li.textContent = nb.name;
-                li.addEventListener('click', () => switchNotebook(nb.id));
-                notebookList.appendChild(li);
-            });
-            noNotebookOverlay.style.display = notebooks.length === 0 ? 'flex' : 'none';
-        }
-
-        function switchNotebook(id) {
-            if (activeNotebookId === id) return;
-            if (activeNotebookId) saveCurrentNotebookData();
-            activeNotebookId = id;
-            const currentNb = notebooks.find(nb => nb.id === id);
-            if (currentNb) {
-                renderNotebookList();
-                notebookNotes.value = currentNb.notes;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                restoreCanvas();
+        function checkLevel5(target, dragged) {
+            if (target.dataset.expected === dragged.dataset.char) {
+                target.innerHTML = '';
+                const clone = dragged.cloneNode(true);
+                clone.style.position = 'static';
+                target.appendChild(clone);
+                dragged.remove();
+                checkWinConditionLevel5();
             }
         }
 
-        function saveCurrentNotebookData() {
-            if (!activeNotebookId) return;
-            const currentNb = notebooks.find(nb => nb.id === activeNotebookId);
-            if (currentNb) {
-                currentNb.notes = notebookNotes.value;
-                currentNb.canvasData = canvas.toDataURL();
+        function checkWinConditionLevel5() {
+            const slots = document.querySelectorAll('.circle-slot');
+            let allFilled = true;
+            slots.forEach(s => { if(s.children.length === 0) allFilled = false; });
+            
+            if (allFilled) {
+                levelDesc.textContent = "🎉 Потрясающе! Ты идеально поняла разницу между вертикальным и горизонтальным написанием слогов!";
+                btnNext.style.display = 'inline-block';
+                btnNext.textContent = 'Пройти заново 🌟';
             }
         }
 
-        function restoreCanvas() {
-            const currentNb = notebooks.find(nb => nb.id === activeNotebookId);
-            if (currentNb && currentNb.canvasData) {
-                const img = new Image();
-                img.src = currentNb.canvasData;
-                img.onload = () => ctx.drawImage(img, 0, 0);
+        btnNext.addEventListener('click', () => {
+            if (currentLevel < 5) {
+                initLevel(currentLevel + 1);
+            } else {
+                initLevel(1);
+                btnNext.textContent = 'Дальше ✨';
             }
+        });
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
         }
 
-        notebookNotes.addEventListener('input', saveCurrentNotebookData);
+        initLevel(1);
     </script>
 </body>
 </html>
